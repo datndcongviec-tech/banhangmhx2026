@@ -3,20 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chương trình gây quỹ — Quản Lý Bán Hàng</title>
+  <title>Chương trình Gây quỹ MHX 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <!-- Firebase SDKs -->
   <script type="module">
-    import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
-                                                      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getDatabase, ref, push, set, remove, onValue, off, get }
-                                                      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getDatabase, ref, push, set, remove, onValue, off, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
     window.__fbModules = { initializeApp, getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, getDatabase, ref, push, set, remove, onValue, off, get };
   </script>
 
@@ -28,8 +26,8 @@
 <div id="loginScreen" class="login-screen">
   <div class="login-card">
     <div class="login-brand">🌱</div>
-    <h1 class="login-title">Quỹ Tình Nguyện</h1>
-    <p class="login-sub">Hệ thống quản lý bán hàng cho chiến dịch gây quỹ</p>
+    <h1 class="login-title">Chương trình Gây quỹ MHX 2026</h1>
+    <p class="login-sub">Hệ thống quản lý bán hàng cho chiến dịch gây quỹ tình nguyện</p>
     <div class="login-setup-warn" id="setupWarn" style="display:none">
       ⚠️ Chưa cấu hình Firebase. Xem file <code>app.js</code> và điền thông tin Firebase của bạn.
     </div>
@@ -47,39 +45,35 @@
     <div class="login-brand">👋</div>
     <h1 class="login-title">Xin chào!</h1>
     <p class="login-sub" id="verifyGreet">Bạn đã đăng nhập Google thành công.<br/>Vui lòng nhập tên thành viên để xác nhận.</p>
-
     <div class="verify-input-wrap">
       <input type="text" id="verifyNameInput" placeholder="Nhập tên của bạn trong team..." autocomplete="off" />
       <div class="verify-error" id="verifyError" style="display:none">
         ❌ Tên không có trong danh sách. Liên hệ admin để được thêm vào!
       </div>
     </div>
-
-    <button class="btn-primary" style="width:100%;padding:13px;font-size:15px;margin-top:4px" id="verifyBtn">
-      Xác nhận →
-    </button>
-    <button class="btn-ghost" style="width:100%;margin-top:8px" id="verifyLogoutBtn">
-      ← Đăng xuất & dùng tài khoản khác
-    </button>
+    <button class="btn-primary" style="width:100%;padding:13px;font-size:15px;margin-top:4px" id="verifyBtn">Xác nhận →</button>
+    <button class="btn-ghost" style="width:100%;margin-top:8px;color:#666" id="verifyLogoutBtn">← Đăng xuất & dùng tài khoản khác</button>
   </div>
 </div>
 
-<!-- ══ APP (hidden until logged in) ═════════════ -->
+<!-- ══ APP ═══════════════════════════════════════ -->
 <div id="appShell" style="display:none">
 
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-brand">
-    <div class="brand-icon">🌱</div>
+    <!-- LOGO: Thay LINK_LOGO_CUA_BAN bằng URL ảnh sau khi upload lên GitHub -->
+    <img class="brand-logo" src="https://raw.githubusercontent.com/datndcongviec-tech/banhangmhx2026/main/678846328_122160653762970758_4219473172697972335_n.jpg" alt="Logo MHX" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+    <div class="brand-logo-fallback" style="display:none">🌱</div>
     <div>
-      <div class="brand-title">Quỹ Tình Nguyện</div>
-      <div class="brand-sub">Sales Dashboard</div>
+      <div class="brand-title">Chương trình Gây quỹ</div>
+      <div class="brand-name">MHX 2026</div>
     </div>
   </div>
 
   <nav class="sidebar-nav">
     <a href="#" class="nav-item active" data-page="dashboard"><span class="nav-icon">◈</span> Tổng Quan</a>
-    <a href="#" class="nav-item" data-page="sales"><span class="nav-icon">◉</span> Nhập Doanh Thu</a>
+    <a href="#" class="nav-item" data-page="sales"><span class="nav-icon">◉</span> Nhập Đơn Hàng</a>
     <a href="#" class="nav-item" data-page="products"><span class="nav-icon">◇</span> Sản Phẩm & Giá</a>
     <a href="#" class="nav-item" data-page="history"><span class="nav-icon">◎</span> Lịch Sử Bán Hàng</a>
     <a href="#" class="nav-item" data-page="report"><span class="nav-icon">◆</span> Báo Cáo & Xuất File</a>
@@ -129,12 +123,12 @@
         <div class="stat-delta" id="statTotalDelta">— hôm nay</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Số Ca Bán</div>
+        <div class="stat-label">Tổng Số Đơn Hàng</div>
         <div class="stat-value" id="statSessions">0</div>
-        <div class="stat-delta">ca ghi nhận</div>
+        <div class="stat-delta">đơn đã ghi nhận</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">TB / Ca</div>
+        <div class="stat-label">TB / Đơn</div>
         <div class="stat-value" id="statAvg">0đ</div>
         <div class="stat-delta">doanh thu trung bình</div>
       </div>
@@ -155,7 +149,7 @@
       </div>
     </div>
     <div class="recent-card">
-      <div class="chart-title">Giao Dịch Gần Đây</div>
+      <div class="chart-title">Đơn Hàng Gần Đây</div>
       <table class="data-table">
         <thead><tr><th>Ngày</th><th>Ca</th><th>Sản phẩm</th><th>SL</th><th>Doanh thu</th><th>Người nhập</th></tr></thead>
         <tbody id="recentBody"></tbody>
@@ -166,7 +160,7 @@
   <!-- PAGE: SALES ENTRY -->
   <div class="page" id="page-sales">
     <div class="page-header">
-      <h1>Nhập <span class="accent">Doanh Thu</span></h1>
+      <h1>Nhập <span class="accent">Đơn Hàng</span></h1>
       <p class="page-sub">Ghi nhận kết quả ca bán hàng — lưu realtime lên cloud</p>
     </div>
     <div class="form-card">
@@ -196,18 +190,18 @@
       </div>
       <div class="items-section">
         <div class="items-header">
-          <span>🛒 Các mặt hàng bán được</span>
+          <span>🛒 Các mặt hàng trong đơn</span>
           <button class="btn-add-item" id="addItemBtn">+ Thêm mặt hàng</button>
         </div>
         <div id="saleItems"></div>
       </div>
       <div class="sale-summary">
-        <div class="summary-label">Tổng doanh thu ca này:</div>
+        <div class="summary-label">Tổng giá trị đơn hàng:</div>
         <div class="summary-value" id="saleTotalPreview">0đ</div>
       </div>
       <div class="form-actions">
         <button class="btn-secondary" id="clearSaleBtn">Xoá trắng</button>
-        <button class="btn-primary" id="saveSaleBtn">☁ Lưu lên Cloud</button>
+        <button class="btn-primary" id="saveSaleBtn">☁ Lưu đơn hàng</button>
       </div>
     </div>
   </div>
@@ -216,40 +210,69 @@
   <div class="page" id="page-products">
     <div class="page-header">
       <h1>Sản Phẩm <span class="accent">& Giá</span></h1>
-      <p class="page-sub">Danh mục dùng chung cho cả team</p>
+      <p class="page-sub">Danh mục menu dùng chung cho cả team</p>
     </div>
-    <div class="form-card slim">
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Tên sản phẩm</label>
-          <input type="text" id="prodName" placeholder="Vd: Trà sữa, Bánh mì..." />
+
+    <!-- Tabs -->
+    <div class="prod-tabs">
+      <button class="prod-tab active" data-tab="list">📋 Xem menu</button>
+      <button class="prod-tab" data-tab="manage">⚙ Quản lý sản phẩm</button>
+    </div>
+
+    <!-- Tab: Xem menu (giao diện Shopee) -->
+    <div class="prod-tab-content active" id="tabList">
+      <div class="menu-filter-bar">
+        <button class="menu-cat-btn active" data-cat="">Tất cả</button>
+        <button class="menu-cat-btn" data-cat="Đồ uống">Đồ uống</button>
+        <button class="menu-cat-btn" data-cat="Đồ ăn">Đồ ăn</button>
+        <button class="menu-cat-btn" data-cat="Bánh">Bánh</button>
+        <button class="menu-cat-btn" data-cat="Khác">Khác</button>
+      </div>
+      <div class="menu-grid" id="menuGrid"></div>
+    </div>
+
+    <!-- Tab: Quản lý -->
+    <div class="prod-tab-content" id="tabManage">
+      <div class="form-card slim">
+        <div class="manage-form-title" id="manageFormTitle">➕ Thêm sản phẩm mới</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Tên sản phẩm</label>
+            <input type="text" id="prodName" placeholder="Vd: Trà sữa, Bánh mì..." />
+          </div>
+          <div class="form-group">
+            <label>Danh mục</label>
+            <select id="prodCategory">
+              <option value="Đồ uống">Đồ uống</option>
+              <option value="Đồ ăn">Đồ ăn</option>
+              <option value="Bánh">Bánh</option>
+              <option value="Khác">Khác</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Đơn giá (đ)</label>
+            <input type="number" id="prodPrice" placeholder="Vd: 25000" min="0" />
+          </div>
+          <div class="form-group">
+            <label>Ảnh sản phẩm (URL)</label>
+            <input type="text" id="prodImage" placeholder="https://... hoặc để trống" />
+          </div>
         </div>
-        <div class="form-group">
-          <label>Danh mục</label>
-          <select id="prodCategory">
-            <option value="Đồ uống">Đồ uống</option>
-            <option value="Đồ ăn">Đồ ăn</option>
-            <option value="Bánh">Bánh</option>
-            <option value="Khác">Khác</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Đơn giá (đ)</label>
-          <input type="number" id="prodPrice" placeholder="Vd: 25000" min="0" />
-        </div>
-        <div class="form-group" style="display:flex;align-items:flex-end;">
-          <button class="btn-primary full" id="addProductBtn">+ Thêm sản phẩm</button>
+        <div class="form-actions">
+          <button class="btn-secondary" id="cancelEditBtn" style="display:none">Huỷ sửa</button>
+          <button class="btn-primary" id="addProductBtn">+ Thêm sản phẩm</button>
         </div>
       </div>
+
+      <div class="manage-list" id="manageList"></div>
     </div>
-    <div class="products-grid" id="productsGrid"></div>
   </div>
 
   <!-- PAGE: HISTORY -->
   <div class="page" id="page-history">
     <div class="page-header">
       <h1>Lịch Sử <span class="accent">Bán Hàng</span></h1>
-      <p class="page-sub">Toàn bộ các ca đã ghi nhận</p>
+      <p class="page-sub">Toàn bộ các đơn hàng đã ghi nhận</p>
     </div>
     <div class="filter-bar">
       <input type="date" id="filterFrom" />
@@ -298,7 +321,7 @@
     <div class="summary-table-card">
       <div class="chart-title">Tổng Kết Theo Ngày</div>
       <table class="data-table">
-        <thead><tr><th>Ngày</th><th>Số ca</th><th>Tổng doanh thu</th><th>TB/ca</th></tr></thead>
+        <thead><tr><th>Ngày</th><th>Số đơn</th><th>Tổng doanh thu</th><th>TB/đơn</th></tr></thead>
         <tbody id="summaryBody"></tbody>
       </table>
     </div>
@@ -322,9 +345,7 @@
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
-
 <script type="module" src="app.js"></script>
 </body>
 </html>
