@@ -1,0 +1,23 @@
+{
+  "name": "Gây quỹ MHX 2026",
+  "short_name": "MHX 2026",
+  "description": "Đặt hàng ủng hộ chương trình gây quỹ tình nguyện MHX 2026",
+  "start_url": "/banhangmhx2026/order.html",
+  "scope": "/banhangmhx2026/",
+  "display": "standalone",
+  "background_color": "#0D47A1",
+  "theme_color": "#0D47A1",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/datndcongviec-tech/banhangmhx2026/main/678846328_122160653762970758_4219473172697972335_n.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/datndcongviec-tech/banhangmhx2026/main/678846328_122160653762970758_4219473172697972335_n.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}

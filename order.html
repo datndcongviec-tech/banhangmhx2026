@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Đặt hàng — Gây quỹ MHX 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="theme-color" content="#0D47A1"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-title" content="MHX 2026"/>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, onValue, push, set, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    window.__fbModules = { initializeApp, getDatabase, ref, onValue, push, set, get };
+  </script>
+  <link rel="stylesheet" href="order.css"/>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-logo">
+      <img id="headerLogo" src="https://raw.githubusercontent.com/datndcongviec-tech/banhangmhx2026/main/678846328_122160653762970758_4219473172697972335_n.jpg" alt="MHX 2026" onerror="this.style.display='none'"/>
+      <div class="header-text">
+        <div class="header-brand" id="headerBrand">Chương trình Gây quỹ</div>
+        <div class="header-sub" id="headerSub">MHX 2026 — Chi Bộ Sinh Viên 3</div>
+      </div>
+    </div>
+    <a href="#order-form" class="header-cta">Đặt hàng ngay</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <img id="heroBanner" src="" alt="" class="hero-img" style="display:none"/>
+    <div class="hero-overlay"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">🌱 Chiến dịch gây quỹ tình nguyện</div>
+    <h1 class="hero-title" id="heroTitle">Gây quỹ<br/><span>MHX 2026</span></h1>
+    <p class="hero-desc" id="heroDesc">Mỗi đơn hàng của bạn là một đóng góp ý nghĩa cho chương trình tình nguyện của chúng tôi.</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-val" id="heroOrders">0</div>
+        <div class="hero-stat-label">Đơn hàng</div>
+      </div>
+      <div class="hero-stat-div"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-val" id="heroRevenue">0đ</div>
+        <div class="hero-stat-label">Đã gây quỹ</div>
+      </div>
+      <div class="hero-stat-div"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-val" id="heroGoalPct">0%</div>
+        <div class="hero-stat-label">Mục tiêu</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-wave">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="#F5F7FA"/></svg>
+  </div>
+</section>
+
+<!-- NGOÀI GIỜ BANNER -->
+<div class="outside-hours-banner" id="outsideHoursBanner" style="display:none">
+  <div class="outside-hours-inner">
+    🕐 Hiện ngoài giờ hoạt động (<span id="workHours">8:00 – 17:00</span>, T2–T6). Đơn của bạn vẫn được nhận và xử lý khi mở ca!
+  </div>
+</div>
+
+<!-- MENU -->
+<section class="menu-section" id="menu-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">🍱 Thực đơn</h2>
+      <p class="section-sub">Chọn món yêu thích của bạn</p>
+    </div>
+    <div class="cat-pills" id="catPills">
+      <button class="cat-pill active" data-cat="">Tất cả</button>
+    </div>
+    <div class="menu-grid" id="menuGrid">
+      <div class="menu-loading"><div class="spinner-ring"></div><span>Đang tải thực đơn...</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CART BAR FLOATING -->
+<div class="cart-bar" id="cartBar" style="display:none">
+  <div class="cart-bar-inner">
+    <div class="cart-bar-info">
+      <div class="cart-bar-count"><span id="cartCount">0</span> món</div>
+      <div class="cart-bar-total" id="cartTotal">0đ</div>
+    </div>
+    <button class="cart-bar-btn" id="openCartBtn">Xem giỏ hàng 🛒</button>
+  </div>
+</div>
+
+<!-- FORM ĐẶT HÀNG -->
+<section class="order-section" id="order-form">
+  <div class="container">
+    <div class="order-layout">
+
+      <!-- Cột trái -->
+      <div class="order-left">
+        <div class="order-card">
+          <div class="order-card-title">📋 Giỏ hàng của bạn</div>
+          <div id="cartItems">
+            <div class="cart-empty">Chưa chọn món nào. <a href="#menu-section">Xem thực đơn →</a></div>
+          </div>
+          <div class="cart-summary" id="cartSummary" style="display:none">
+            <div class="cart-summary-row"><span>Tạm tính</span><span id="subtotalAmt">0đ</span></div>
+            <div class="cart-summary-row"><span>Phí ship</span><span id="shipFeeAmt" class="ship-fee-val">—</span></div>
+            <div class="cart-summary-row total"><span>Tổng cộng</span><span id="grandTotal">0đ</span></div>
+          </div>
+        </div>
+
+        <div class="order-card">
+          <div class="order-card-title">📍 Thông tin giao hàng</div>
+          <div class="form-group">
+            <label>Họ tên <span class="req">*</span></label>
+            <input type="text" id="custName" placeholder="Nguyễn Văn A"/>
+          </div>
+          <div class="form-group">
+            <label>Số điện thoại <span class="req">*</span></label>
+            <input type="tel" id="custPhone" placeholder="0912 345 678"/>
+          </div>
+          <div class="form-group">
+            <label>Địa chỉ giao hàng <span class="req">*</span></label>
+            <input type="text" id="custAddress" placeholder="Số nhà, tên đường, phường..."/>
+          </div>
+          <div class="form-group">
+            <label>Khoảng cách ước tính <span class="req">*</span></label>
+            <select id="distanceSelect">
+              <option value="">— Chọn khoảng cách —</option>
+              <option value="0-2">0 – 2 km</option>
+              <option value="2-5">2 – 5 km</option>
+              <option value="5+">Trên 5 km</option>
+            </select>
+            <div class="ship-fee-hint" id="shipFeeHint">Chọn khoảng cách để tính phí ship</div>
+          </div>
+          <div class="form-group">
+            <label>Thời gian nhận hàng mong muốn <span class="req">*</span></label>
+            <input type="datetime-local" id="deliveryTime"/>
+          </div>
+          <div class="form-group">
+            <label>Ghi chú / yêu cầu đặc biệt</label>
+            <textarea id="custNote" rows="3" placeholder="Ví dụ: ít đường, không đá, giao trước cổng..."></textarea>
+          </div>
+        </div>
+
+        <div class="order-card">
+          <div class="order-card-title">💳 Phương thức thanh toán</div>
+          <div class="payment-options">
+            <label class="payment-opt">
+              <input type="radio" name="payment" value="COD" checked/>
+              <div class="payment-opt-body">
+                <div class="payment-opt-icon">💵</div>
+                <div><div class="payment-opt-name">Tiền mặt (COD)</div><div class="payment-opt-desc">Thanh toán khi nhận hàng</div></div>
+              </div>
+            </label>
+            <label class="payment-opt">
+              <input type="radio" name="payment" value="transfer"/>
+              <div class="payment-opt-body">
+                <div class="payment-opt-icon">🏦</div>
+                <div><div class="payment-opt-name">Chuyển khoản</div><div class="payment-opt-desc">Chuyển khoản trước khi nhận</div></div>
+              </div>
+            </label>
+          </div>
+          <div class="transfer-info" id="transferInfo" style="display:none">
+            <div class="transfer-box">
+              <div class="transfer-qr-wrap">
+                <img id="transferQR" src="" alt="QR" class="transfer-qr" style="display:none" onerror="this.style.display='none'"/>
+                <div class="transfer-qr-placeholder" id="qrPlaceholder">📱 QR đang cập nhật</div>
+              </div>
+              <div class="transfer-details">
+                <div class="transfer-row"><span class="transfer-label">Ngân hàng</span><span class="transfer-val" id="bankName">—</span></div>
+                <div class="transfer-row"><span class="transfer-label">Số tài khoản</span><span class="transfer-val" id="bankAccount">—</span></div>
+                <div class="transfer-row"><span class="transfer-label">Chủ tài khoản</span><span class="transfer-val" id="bankOwner">—</span></div>
+                <div class="transfer-note">Nội dung CK: <strong id="transferContent">MHX2026 [tên] [sđt]</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-order" id="submitOrderBtn" disabled>
+          <span id="submitBtnText">Chọn món để đặt hàng</span>
+        </button>
+        <p class="order-disclaimer" id="order-disclaimer">Sau khi đặt, bạn có thể huỷ đơn nếu chưa được xác nhận.</p>
+      </div>
+
+      <!-- Cột phải -->
+      <div class="order-right">
+        <div class="info-card">
+          <div class="info-card-title">⏰ Giờ hoạt động</div>
+          <div class="info-hours">
+            <div class="info-hours-row"><span>Thứ 2 – Thứ 6</span><span id="infoHours">8:00 – 17:00</span></div>
+            <div class="info-hours-row"><span>Thứ 7 – CN</span><span class="text-muted">Nghỉ</span></div>
+          </div>
+          <div class="status-badge" id="statusBadge"><span class="status-dot"></span><span id="statusText">Đang mở</span></div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">🚚 Phí giao hàng</div>
+          <div id="shipFeeTable"><div class="ship-loading">Đang tải...</div></div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">📞 Liên hệ hỗ trợ</div>
+          <div class="contact-info">
+            <a href="#" id="contactPhone" class="contact-link">📱 <span id="contactPhoneVal">Đang cập nhật</span></a>
+            <p class="contact-note">Cần hỗ trợ hoặc thay đổi đơn hàng, vui lòng gọi trực tiếp.</p>
+          </div>
+        </div>
+        <div class="info-card mission-card">
+          <div class="mission-icon">💚</div>
+          <div class="mission-text">Mỗi đơn hàng bạn đặt góp phần trực tiếp vào quỹ tình nguyện MHX 2026.</div>
+          <div class="mission-progress">
+            <div class="mission-bar-wrap"><div class="mission-bar" id="missionBar" style="width:0%"></div></div>
+            <div class="mission-pct" id="missionPct">0% mục tiêu</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OVERLAY TRẠNG THÁI ĐƠN -->
+<div class="order-status-overlay" id="orderStatusOverlay" style="display:none">
+  <div class="order-status-card">
+    <div class="order-status-icon" id="statusIcon">✅</div>
+    <h2 class="order-status-title" id="statusTitle">Đặt hàng thành công!</h2>
+    <p class="order-status-sub">Theo dõi trạng thái đơn hàng của bạn bên dưới.</p>
+    <div class="order-id-box">Mã đơn: <strong id="orderIdDisplay">—</strong></div>
+    <div class="status-tracker">
+      <div class="tracker-step active" id="step-new"><div class="tracker-dot">1</div><div class="tracker-label">Đã đặt</div></div>
+      <div class="tracker-line" id="line-1"></div>
+      <div class="tracker-step" id="step-confirmed"><div class="tracker-dot">2</div><div class="tracker-label">Xác nhận</div></div>
+      <div class="tracker-line" id="line-2"></div>
+      <div class="tracker-step" id="step-shipping"><div class="tracker-dot">3</div><div class="tracker-label">Đang giao</div></div>
+      <div class="tracker-line" id="line-3"></div>
+      <div class="tracker-step" id="step-done"><div class="tracker-dot">4</div><div class="tracker-label">Hoàn thành</div></div>
+    </div>
+    <div class="status-message" id="statusMessage">⏳ Đang chờ nhân sự xác nhận...</div>
+    <button class="btn-cancel-order" id="cancelOrderBtn" style="display:none">Huỷ đơn hàng</button>
+    <button class="btn-new-order" id="newOrderBtn">Đặt đơn mới</button>
+  </div>
+</div>
+
+<div class="o-toast" id="oToast"></div>
+<script type="module" src="order.js"></script>
+</body>
+</html>
